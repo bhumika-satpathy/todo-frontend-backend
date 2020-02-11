@@ -20,7 +20,23 @@ class App extends Component {
     return result.data;
   }
 
+  // postNote=async () => {
+  //   axios({
+  //     method: 'post',
+  //     url: 'http://localhost:8080/note',
+  //     data: {
+  //       title: this.state.title,
+  //     },
+  //     validateStatus: (status) => true,
+  //   }).catch((error) => {
+  //     console.log(error);
+  //   }).then((response) => {
+  //     console.log(response);
+  //   });
+  // }
+
   componentDidMount=async () => {
+    // const getNote = await this.postNote();
     const notesData = await this.getNoteList();
     this.setState({
       todos: notesData,
@@ -38,15 +54,20 @@ class App extends Component {
     });
   }
 
-  updateNotes=() => {
+  updateNotes=async () => {
     const { todos } = this.state;
     const todo = document.getElementById('textbox').value;
+    const payload = {
+      title: 'New Title',
+      description: todo,
+    };
+    const res = await axios.post('http://localhost:8080/note', payload);
     this.setState({
-      todos: [todo, ...todos],
+      todos: [res.data, ...todos],
       // [todo, ...todos],
       isCreated: false,
     }, () => {
-      console.log('Boom', this.state.todos);
+      // console.log('Boom', this.state.todos);
     });
   }
 
