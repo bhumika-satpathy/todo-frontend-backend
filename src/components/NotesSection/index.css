@@ -1,0 +1,11 @@
+.list{
+    display: flex;
+    flex:2;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: linear-gradient(white, skyblue);
+}
+.text{
+    color: skyblue;
+}
