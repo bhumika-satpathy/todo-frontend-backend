@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import queryString from 'query-string';
 import AllTodos from './components/AllTodos';
 import CreateNotes from './components/CreateNotes';
 
@@ -10,8 +11,12 @@ class App extends Component {
     super(props);
 
     this.state = {
-      isCreated: false,
-      todos: ['First Note'],
+      todos: [
+        {
+          id: 0,
+          title: '',
+        },
+      ],
     };
   }
 
@@ -36,6 +41,7 @@ class App extends Component {
   // }
 
   componentDidMount=async () => {
+    const values = queryString.parse(this.props.location.search);
     // const getNote = await this.postNote();
     const notesData = await this.getNoteList();
     this.setState({
@@ -43,6 +49,14 @@ class App extends Component {
     });
   }
 
+  deleteNote = (noteId) => {
+    const { todos } = this.state;
+    const notesList = [...todos];
+    const res = notesList.filter((obj) => obj.noteId !== noteId);
+    this.setState({
+      listOfNotes: [...res],
+    });
+  }
 
   onClickDone = (text) => {
     const { todos } = this.state;
@@ -80,11 +94,26 @@ class App extends Component {
   }
 
   render() {
-    const { isCreated, todos } = this.state;
+    const { todos } = this.state;
     return (
-      !isCreated
-        ? <AllTodos buttonClick={this.createNew} todos={todos} onClickDone={(text) => this.onClickDone(text)} />
-        : <CreateNotes buttonClick={this.updateNotes} />
+      <Router>
+        <Switch>
+
+          <Route exact path="/">
+            <AllTodos
+              buttonClick={this.createNew}
+              todos={todos}
+              onClickDone={(text) => this.onClickDone(text)}
+              deleteNote={(noteId) => this.deleteNote(noteId)}
+            />
+          </Route>
+
+          <Route exact path="/new">
+            <CreateNotes buttonClick={this.updateNotes} />
+          </Route>
+
+        </Switch>
+      </Router>
     );
   }
 }
